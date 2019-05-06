@@ -8,7 +8,7 @@
     <!-- 配置zk地址 -->
     <property>
         <name>hbase.zookeeper.quorum</name>
-        <value>192.168.100.81:2181,192.168.100.82:2181,192.168.100.83:2181</value>
+        <value>192.168.100.21:2181</value>
     </property>
 
 </configuration>

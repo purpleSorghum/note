@@ -15,11 +15,13 @@ import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -32,26 +34,15 @@ public class HbaseCRUD {
     private static Table table = null;
 
     public static void main(String[] args) throws Exception {
-        init();
-        put();
-        get();
-        append();
-        delete();
-        get();
+        table = Common.init();
+//        put();
+//        get();
+//        append();
+//        delete();
+//        get();
+        scan();
     }
 
-    // 初始化
-    private static void init() throws Exception{
-        Configuration config = HBaseConfiguration.create();
-        Connection conn=ConnectionFactory.createConnection(config);
-        Admin admin = conn.getAdmin();
-        if(!admin.tableExists(TableName.valueOf("t2"))){
-            HTableDescriptor table=new HTableDescriptor(TableName.valueOf("t2"));
-            table.addFamily(new HColumnDescriptor("f1"));
-            admin.createTable(table);
-        }
-        table=conn.getTable(TableName.valueOf("t2"));
-    }
 
     public static void put() throws Exception{
         Put put=new Put(Bytes.toBytes("row1"));
@@ -104,8 +95,22 @@ public class HbaseCRUD {
         System.out.println("delete success !");
     }
 
-    public static void scan(){
+    public static void scan() throws Exception{
         Scan scan = new Scan();
+        scan.addColumn(Bytes.toBytes("f1"),Bytes.toBytes("phone"));
+        scan.addFamily(Bytes.toBytes("f2"));
+        Iterable<Result> results=table.getScanner(scan);
+        Iterator<Result> it=results.iterator();
+        while (it.hasNext()){
+            Result result=it.next();
+            Cell[] cells=result.rawCells();
+            for(Cell cell:cells){
+                System.out.println("行："+Bytes.toString(CellUtil.cloneRow(cell))+
+                        " ,列族："+Bytes.toString(CellUtil.cloneFamily(cell))+
+                        " ,列："+Bytes.toString(CellUtil.cloneQualifier(cell))+
+                        " ,值："+Bytes.toString(CellUtil.cloneValue(cell)));
+            }
+        }
     }
 
 }
