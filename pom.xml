@@ -11,6 +11,7 @@
     <modules>
         <module>hbase.coprocessor</module>
         <module>hbase.filter</module>
+        <module>mapreduce</module>
     </modules>
 
 
