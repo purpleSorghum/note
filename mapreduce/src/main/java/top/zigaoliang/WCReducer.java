@@ -1,4 +1,4 @@
-package purple.sorghum;
+package top.zigaoliang;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;

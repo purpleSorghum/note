@@ -1,4 +1,4 @@
-package purple.sorghum;
+package top.zigaoliang;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.hadoop.fs.FileSystem;

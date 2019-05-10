@@ -1,21 +1,12 @@
-package purple.sorghum;
+package top.zigaoliang;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Append;
-import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -97,8 +88,13 @@ public class HbaseCRUD {
 
     public static void scan() throws Exception{
         Scan scan = new Scan();
-        scan.addColumn(Bytes.toBytes("f1"),Bytes.toBytes("phone"));
-        scan.addFamily(Bytes.toBytes("f2"));
+        scan.setSmall(true);//暂时还不知道什么意思
+
+        scan.setBatch(3);//限制一个results的最大列数
+        scan.setCaching(5);//限制每次请求的results的数量
+//        scan.setLimit(10); //限制每次请求的行数，在2.0以后的版本中才存在
+//        scan.addColumn(Bytes.toBytes("f1"),Bytes.toBytes("phone"));
+//        scan.addFamily(Bytes.toBytes("f2"));
         Iterable<Result> results=table.getScanner(scan);
         Iterator<Result> it=results.iterator();
         while (it.hasNext()){

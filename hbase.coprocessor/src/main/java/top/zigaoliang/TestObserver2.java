@@ -1,4 +1,4 @@
-package purple.sorghum;
+package top.zigaoliang;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.hadoop.conf.Configuration;
@@ -32,7 +32,6 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import java.util.NavigableSet;
 import java.util.concurrent.ConcurrentMap;
@@ -1081,7 +1080,13 @@ public class TestObserver2 extends BaseObserver {
 
     @Override
     public RegionScanner preScannerOpen(ObserverContext<RegionCoprocessorEnvironment> e, Scan scan, RegionScanner s) throws IOException {
-        outInfo("TestObserver2.preScannerOpen() ");
+        outInfo("TestObserver2.preScannerOpen(scan.isSmall():"+scan.isSmall()+" , scan.getBatch():"+scan.getBatch()+".) ");
+        String tableName=e.getEnvironment().getRegion().getTableDesc().getNameAsString();
+        outInfo("tableName:"+tableName);
+        byte[][] f=scan.getFamilies();
+        for(int i=0;i<f.length;i++){
+            outInfo("family:"+Bytes.toString(f[i]));
+        }
         return super.preScannerOpen(e, scan, s);
     }
 

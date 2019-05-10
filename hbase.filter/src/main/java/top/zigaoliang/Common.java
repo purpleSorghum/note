@@ -1,4 +1,4 @@
-package purple.sorghum;
+package top.zigaoliang;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
