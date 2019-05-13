@@ -32,6 +32,7 @@ public class HbaseCRUD {
 //        delete();
 //        get();
         scan();
+        Common.destroy();
     }
 
 
@@ -88,7 +89,6 @@ public class HbaseCRUD {
 
     public static void scan() throws Exception{
         Scan scan = new Scan();
-        scan.setSmall(true);//暂时还不知道什么意思
 
         scan.setBatch(3);//限制一个results的最大列数
         scan.setCaching(5);//限制每次请求的results的数量
