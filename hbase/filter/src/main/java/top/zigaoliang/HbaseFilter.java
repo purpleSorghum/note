@@ -8,6 +8,7 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.filter.BinaryComparator;
+import org.apache.hadoop.hbase.filter.ColumnPaginationFilter;
 import org.apache.hadoop.hbase.filter.ColumnPrefixFilter;
 import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.FamilyFilter;
@@ -149,7 +150,10 @@ public class HbaseFilter {
         ColumnPrefixFilter columnPrefixFilter = new ColumnPrefixFilter("nam".getBytes());
 
         //5、分页过滤器 PageFilter
-        PageFilter pageFilter = new PageFilter(10);
+        PageFilter pageFilter = new PageFilter(0);
+
+        //基于列分页过滤器.对列进行分页limit列的数量，offset列的偏移量，下面是只返回一个列，是第二列
+        ColumnPaginationFilter columnPaginationFilter =new ColumnPaginationFilter(1,1);
 
         scanTest(pageFilter);
     }
