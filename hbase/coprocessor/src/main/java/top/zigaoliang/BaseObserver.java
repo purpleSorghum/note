@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 public class BaseObserver extends BaseRegionObserver implements MasterObserver,RegionServerObserver, BulkLoadObserver,WALObserver {
@@ -37,7 +38,7 @@ public class BaseObserver extends BaseRegionObserver implements MasterObserver,R
         System.out.println(str);
         try {
             FileWriter fw = new FileWriter("/home/coprocessor.txt",true);
-            fw.write(str + "\r\n");
+            fw.write(new Date() +" | "+ str + "\r\n");
             fw.close();
         } catch (Exception e) {
             e.printStackTrace();

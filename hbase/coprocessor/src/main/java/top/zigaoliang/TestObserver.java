@@ -8,6 +8,8 @@ import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.coprocessor.*;
 import org.apache.hadoop.hbase.filter.ByteArrayComparable;
 import org.apache.hadoop.hbase.filter.CompareFilter;
+import org.apache.hadoop.hbase.filter.Filter;
+import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
 import org.apache.hadoop.hbase.io.FSDataInputStreamWrapper;
 import org.apache.hadoop.hbase.io.Reference;
 import org.apache.hadoop.hbase.io.hfile.CacheConfig;
@@ -23,13 +25,14 @@ import org.apache.hadoop.hbase.regionserver.compactions.CompactionRequest;
 import org.apache.hadoop.hbase.regionserver.wal.HLogKey;
 import org.apache.hadoop.hbase.regionserver.wal.WALEdit;
 import org.apache.hadoop.hbase.replication.ReplicationEndpoint;
+import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.util.Pair;
 import org.apache.hadoop.hbase.wal.WALKey;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.NavigableSet;
+
 
 
 public class TestObserver extends BaseObserver {
@@ -349,17 +352,6 @@ public class TestObserver extends BaseObserver {
         outInfo("TestObserver2.postBalance() ");
     }
 
-/*    @Override
-    public boolean preSetSplitOrMergeEnabled(ObserverContext<MasterCoprocessorEnvironment> observerContext, boolean b, Admin.MasterSwitchType masterSwitchType) throws IOException {
-        outInfo("TestObserver2.preSetSplitOrMergeEnabled() ");
-        return super.preSetSplitOrMergeEnabled(observerContext, b, masterSwitchType);
-    }
-
-    @Override
-    public void postSetSplitOrMergeEnabled(ObserverContext<MasterCoprocessorEnvironment> observerContext, boolean b, Admin.MasterSwitchType masterSwitchType) throws IOException {
-        super.postSetSplitOrMergeEnabled(observerContext, b, masterSwitchType);
-        outInfo("TestObserver2.postSetSplitOrMergeEnabled() ");
-    }*/
 
     @Override
     public boolean preBalanceSwitch(ObserverContext<MasterCoprocessorEnvironment> observerContext, boolean b) throws IOException {
@@ -971,7 +963,21 @@ public class TestObserver extends BaseObserver {
 
     @Override
     public RegionScanner preScannerOpen(ObserverContext<RegionCoprocessorEnvironment> e, Scan scan, RegionScanner s) throws IOException {
-        outInfo("TestObserver2.preScannerOpen() ");
+        Filter filter=scan.getFilter();
+        String table=e.getEnvironment().getRegion().getTableDesc().getTableName().getNameAsString();
+        outInfo("TestObserver2.preScannerOpen()");
+        outInfo("preScannerOpen-filter: "+filter);
+        outInfo("preScannerOpen-table: "+table);
+        String family="";
+        byte[][] f=scan.getFamilies();
+        for(int i=0;i<f.length;i++){
+            family += Bytes.toString(f[i])+",";
+        }
+        outInfo("preScannerOpen-family: "+family);
+        if(filter instanceof KeyOnlyFilter){
+            Exception exception= new RuntimeException("查看当前的调用！");
+            exception.printStackTrace();
+        }
         return super.preScannerOpen(e, scan, s);
     }
 
@@ -1082,16 +1088,16 @@ public class TestObserver extends BaseObserver {
         outInfo("TestObserver2.postInstantiateDeleteTracker() ");
         return super.postInstantiateDeleteTracker(ctx, delTracker);
     }
-    @Override
-    public boolean preSetSplitOrMergeEnabled(ObserverContext<MasterCoprocessorEnvironment> observerContext, boolean b, Admin.MasterSwitchType masterSwitchType) throws IOException {
-        outInfo("TestObserver2.preSetSplitOrMergeEnabled() ");
-        return super.preSetSplitOrMergeEnabled(observerContext, b, masterSwitchType);
-    }
-
-    @Override
-    public void postSetSplitOrMergeEnabled(ObserverContext<MasterCoprocessorEnvironment> observerContext, boolean b, Admin.MasterSwitchType masterSwitchType) throws IOException {
-        outInfo("TestObserver2.postSetSplitOrMergeEnabled() ");
-    }
+//    @Override
+//    public boolean preSetSplitOrMergeEnabled(ObserverContext<MasterCoprocessorEnvironment> observerContext, boolean b, Admin.MasterSwitchType masterSwitchType) throws IOException {
+//        outInfo("TestObserver2.preSetSplitOrMergeEnabled() ");
+//        return super.preSetSplitOrMergeEnabled(observerContext, b, masterSwitchType);
+//    }
+//
+//    @Override
+//    public void postSetSplitOrMergeEnabled(ObserverContext<MasterCoprocessorEnvironment> observerContext, boolean b, Admin.MasterSwitchType masterSwitchType) throws IOException {
+//        outInfo("TestObserver2.postSetSplitOrMergeEnabled() ");
+//    }
 
     @Override
     public void prePrepareBulkLoad(ObserverContext<RegionCoprocessorEnvironment> observerContext, SecureBulkLoadProtos.PrepareBulkLoadRequest prepareBulkLoadRequest) throws IOException {
@@ -1164,11 +1170,11 @@ public class TestObserver extends BaseObserver {
         outInfo("TestObserver2.postReplicateLogEntries() ");
     }
 
-    @Override
-    public KeyValueScanner preStoreScannerOpen(ObserverContext<RegionCoprocessorEnvironment> c, Store store, Scan scan, NavigableSet<byte[]> targetCols, KeyValueScanner s) throws IOException {
-        outInfo("TestObserver2.preStoreScannerOpen() ");
-        return super.preStoreScannerOpen(c, store, scan, targetCols, s);
-    }
+//    @Override
+//    public KeyValueScanner preStoreScannerOpen(ObserverContext<RegionCoprocessorEnvironment> c, Store store, Scan scan, NavigableSet<byte[]> targetCols, KeyValueScanner s) throws IOException {
+//        outInfo("TestObserver2.preStoreScannerOpen() ");
+//        return super.preStoreScannerOpen(c, store, scan, targetCols, s);
+//    }
 
     @Override
     public boolean preWALWrite(ObserverContext<? extends WALCoprocessorEnvironment> observerContext, HRegionInfo hRegionInfo, WALKey walKey, WALEdit walEdit) throws IOException {

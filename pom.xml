@@ -12,6 +12,7 @@
         <module>javabase</module>
         <module>hbase</module>
         <module>hdfs</module>
+        <module>zookeeper</module>
     </modules>
 
 

@@ -4,6 +4,7 @@ import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.MasterNotRunningException;
 import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.apache.hadoop.hbase.client.Admin;
+import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.junit.Test;
 
@@ -20,14 +21,17 @@ public class TestHbaseConnection {
 
     @Test
     public void test() throws Exception {
+        while (true){
         Boolean hbaseStatus1 = false;
         Admin admin = null;
+            Connection conn=null;
         try {
             LOG.info("getHBaseStatus: creating default Hbase configuration");
 
             LOG.info("getHBaseStatus: setting config values from client");
             LOG.info("getHBaseStatus: checking HbaseAvailability with the new config");
-            admin = ConnectionFactory.createConnection(HBaseConfiguration.create()).getAdmin();
+            conn=ConnectionFactory.createConnection(HBaseConfiguration.create());
+            admin = conn.getAdmin();
             LOG.info("getHBaseStatus: no exception: HbaseAvailability true");
             hbaseStatus1 = true;
         } catch (ZooKeeperConnectionException zce) {
@@ -63,8 +67,19 @@ public class TestHbaseConnection {
                     LOG.error("Unable to close HBase connection []", e);
                 }
             }
+
+            if(conn != null){
+                try {
+                    conn.close();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        System.out.println(hbaseStatus1);
+
+            Thread.sleep(1000);
         }
 
-        System.out.println(hbaseStatus1);
     }
 }

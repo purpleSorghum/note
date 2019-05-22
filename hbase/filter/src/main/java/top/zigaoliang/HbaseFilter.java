@@ -13,6 +13,7 @@ import org.apache.hadoop.hbase.filter.ColumnPrefixFilter;
 import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.FamilyFilter;
 import org.apache.hadoop.hbase.filter.Filter;
+import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
 import org.apache.hadoop.hbase.filter.PageFilter;
 import org.apache.hadoop.hbase.filter.PrefixFilter;
 import org.apache.hadoop.hbase.filter.QualifierFilter;
@@ -150,7 +151,10 @@ public class HbaseFilter {
         ColumnPrefixFilter columnPrefixFilter = new ColumnPrefixFilter("nam".getBytes());
 
         //5、分页过滤器 PageFilter
-        PageFilter pageFilter = new PageFilter(0);
+        PageFilter pageFilter = new PageFilter(2);
+
+        //键过滤器 KeyOnlyFilter 只包含键默认不包含值，可以传参数true将值的长度作为值返回
+        KeyOnlyFilter keyOnlyFilter = new KeyOnlyFilter();
 
         //基于列分页过滤器.对列进行分页limit列的数量，offset列的偏移量，下面是只返回一个列，是第二列
         ColumnPaginationFilter columnPaginationFilter =new ColumnPaginationFilter(1,1);
