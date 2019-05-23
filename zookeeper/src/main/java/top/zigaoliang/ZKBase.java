@@ -91,8 +91,7 @@ public class ZKBase {
 
         Stat st = new Stat();
 
-        Watcher w = null ;
-        w = new Watcher() {
+        Watcher w = new Watcher() {
             //回调
             public void process(WatchedEvent event) {
                 try {
