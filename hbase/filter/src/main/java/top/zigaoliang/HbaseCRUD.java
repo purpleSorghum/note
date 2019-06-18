@@ -38,8 +38,14 @@ public class HbaseCRUD {
 
     public static void put() throws Exception{
         Put put=new Put(Bytes.toBytes("row1"));
+        //可以在一行中，同时添加多个列 。一个put对象可以提交同一行的多个单元格，就是列
         put.addColumn(Bytes.toBytes("f1"),Bytes.toBytes("name"),Bytes.toBytes("tom"));
+        put.addColumn(Bytes.toBytes("f1"),Bytes.toBytes("id"),Bytes.toBytes("1"));
+        put.addColumn(Bytes.toBytes("f1"),Bytes.toBytes("phone"),Bytes.toBytes("13044445555"));
         table.put(put);//单个写入
+
+        //可以使用htable的put list 的方法异步提交多个行，但是不保证整体的元子性，只保证一行的元子性。
+        //如果部分行提交失败，可以重新提交就可以了，新的数据会覆盖原来的数据，所以没有元子性可以
         List<Put> list= new ArrayList<Put>();
 
         Put put1 = new Put(Bytes.toBytes("row2"));
