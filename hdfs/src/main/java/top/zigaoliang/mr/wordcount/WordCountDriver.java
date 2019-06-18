@@ -24,6 +24,7 @@ import java.net.URI;
 public class WordCountDriver {
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
+        conf.set("hadoop.user.name","root");
         Job job = Job.getInstance(conf);
         job.setJarByClass(WordCountDriver.class);
         job.setMapperClass(WordCountMapper.class);
