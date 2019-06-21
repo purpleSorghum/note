@@ -1,4 +1,4 @@
-package top.zigaoliang.mr;
+package top.zigaoliang.mr.wc;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;

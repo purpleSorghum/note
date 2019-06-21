@@ -1,4 +1,4 @@
-package top.zigaoliang.mr;
+package top.zigaoliang.mr.wc;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;

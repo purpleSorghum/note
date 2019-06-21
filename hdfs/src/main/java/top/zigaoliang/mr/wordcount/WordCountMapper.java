@@ -1,5 +1,7 @@
 package top.zigaoliang.mr.wordcount;
 
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
@@ -9,9 +11,9 @@ import java.io.IOException;
  * @Author hanlin
  * @Date 2019/6/18 10:53
  **/
-public class WordCountMapper extends Mapper{
+public class WordCountMapper extends Mapper<LongWritable,Text,LongWritable,Text>{
     @Override
-    protected void map(Object key, Object value, Context context) throws IOException, InterruptedException {
+    protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         context.write(key,value);
     }
 }
