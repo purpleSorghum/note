@@ -1,16 +1,12 @@
 package top.zigaoliang.mr.bulkload;
 
-import com.sun.jersey.client.urlconnection.HttpURLConnectionFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.KeyValue;
-import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.mapreduce.HFileOutputFormat;
 import org.apache.hadoop.hbase.mapreduce.HFileOutputFormat2;
+import org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -51,7 +47,7 @@ public class GeneratorHFile2 {
         Configuration conf = new Configuration();
 //        conf.addResource("/soft/hbase/conf/hbase-site.xml");
         conf.set("hbase.fs.tmp.dir","partitions_"+UUID.randomUUID());
-        conf.set("hbase.rootdir","hdfs://centos1:8020/hbase");
+        conf.set("hbase.rootdir","hdfs://192.168.100.21:8020/hbase");
         conf.set("hbase.zookeeper.quorum","192.168.100.21:2181");
         conf.set("zookeeper.znode.parent","/hbase");
 
@@ -81,6 +77,10 @@ public class GeneratorHFile2 {
             HFileOutputFormat2.configureIncrementalLoad(job, table.getTableDescriptor(), table.getRegionLocator());
 
             job.waitForCompletion(true);
+
+            System.out.println("文件已经转换为HFile文件，开始执行BulkLoad操作！");
+            LoadIncrementalHFiles load = new LoadIncrementalHFiles(conf);
+            load.doBulkLoad(new Path(output),table);
         }catch (Exception e){
             e.printStackTrace();
         }
