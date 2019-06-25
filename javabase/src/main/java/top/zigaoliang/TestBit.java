@@ -1,5 +1,7 @@
 package top.zigaoliang;
 
+import org.junit.Test;
+
 /**
  * @ClassName TestBit
  * @Author hanlin
@@ -18,4 +20,11 @@ public class TestBit {
     public static boolean isTowPower(int n){
         return (n & n-1)==0;
     }
+
+    @Test
+    public void bitSum(){
+        System.out.println(9 >> 2-1);
+    }
+
+
 }
