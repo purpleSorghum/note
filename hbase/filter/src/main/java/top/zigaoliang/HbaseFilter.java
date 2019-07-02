@@ -40,7 +40,7 @@ public class HbaseFilter {
 
     public static void main(String[] args) throws Exception {
         table = Common.init();
-//        put();
+        put();
         scan();
     }
 
