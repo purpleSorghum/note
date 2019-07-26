@@ -23,9 +23,16 @@ import java.net.URI;
 import java.util.UUID;
 
 /**
- * @ClassName GeneratorHFile2
  * @Author hanlin
- * @Date 2019/6/21 16:35
+ * @Date 2019/7/24 10:38
+ * @Description 将hdfs上的数据文件，通过mr直接写为hfile文件，然后
+ *              导入到hbase，这样的数据输入会比通过命令进行输入速度上要快很多。
+ *              适合批量导入大量数据。
+ *
+ *         使用方式：将此类打包为jar，然后放到服务器上面（不是hdfs上），使用任务的方式执行此类。
+ *             命令：hadoop jar hdfs.jar top.zigaoliang.mr.bulkload.GeneratorHFile2
+ * @param
+ * @return
  **/
 public class GeneratorHFile2 {
     static class HFileImportMapper2 extends Mapper<LongWritable,Text,ImmutableBytesWritable,KeyValue> {
@@ -37,8 +44,10 @@ public class GeneratorHFile2 {
             String[] datas = line.split(" ");
             String row = "r" + datas[0];
             ImmutableBytesWritable rowkey = new ImmutableBytesWritable(Bytes.toBytes("row"));
-            KeyValue kv = new KeyValue(Bytes.toBytes(row),Bytes.toBytes("f1"),Bytes.toBytes(datas[1]),Bytes.toBytes(datas[2]));
-            context.write(rowkey,kv);
+            KeyValue kv1 = new KeyValue(Bytes.toBytes(row),Bytes.toBytes("f1"),Bytes.toBytes("name"),Bytes.toBytes(datas[1]));
+            KeyValue kv2 = new KeyValue(Bytes.toBytes(row),Bytes.toBytes("f1"),Bytes.toBytes("age"),Bytes.toBytes(datas[2]));
+            context.write(rowkey,kv1);
+            context.write(rowkey,kv2);
         }
 
     }

@@ -1080,13 +1080,7 @@ public class TestObserver2 extends BaseObserver {
 
     @Override
     public RegionScanner preScannerOpen(ObserverContext<RegionCoprocessorEnvironment> e, Scan scan, RegionScanner s) throws IOException {
-        outInfo("TestObserver2.preScannerOpen(scan.isSmall():"+scan.isSmall()+" , scan.getBatch():"+scan.getBatch()+".) ");
-        String tableName=e.getEnvironment().getRegion().getTableDesc().getNameAsString();
-        outInfo("tableName:"+tableName);
-        byte[][] f=scan.getFamilies();
-        for(int i=0;i<f.length;i++){
-            outInfo("family:"+Bytes.toString(f[i]));
-        }
+        outInfo("TestObserver2.preScannerOpen() ");
         return super.preScannerOpen(e, scan, s);
     }
 

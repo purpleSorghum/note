@@ -17,6 +17,7 @@ import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
 import org.apache.hadoop.hbase.filter.PageFilter;
 import org.apache.hadoop.hbase.filter.PrefixFilter;
 import org.apache.hadoop.hbase.filter.QualifierFilter;
+import org.apache.hadoop.hbase.filter.RegexStringComparator;
 import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.filter.SingleColumnValueExcludeFilter;
 import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
@@ -87,7 +88,7 @@ public class HbaseFilter {
     public static void scan() throws Exception{
         //行键 大于row8 的行
 //        Filter rowFilter = new RowFilter(CompareFilter.CompareOp.GREATER, new BinaryComparator("row8".getBytes()));
-
+        RegexStringComparator regex = new RegexStringComparator("rowKeyRegex");
         //行建大于等于 row9 的行
         Filter rowFilter = new RowFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL, new BinaryComparator("row9".getBytes()));
 //        scanTest(rowFilter);
