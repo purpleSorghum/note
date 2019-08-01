@@ -181,7 +181,7 @@ public class Conf {
         public boolean firstName;//true 保留姓  false 保留名
         public boolean length;//保持字数
         public int coverType;  //1 遮蔽姓 2 遮蔽名 3 遮蔽中间字 4 保留中间字
-        public String symbol="*";
+        public String symbol="*";//默认使用*号遮蔽
 
         @Override
         public String getMaskRule() {

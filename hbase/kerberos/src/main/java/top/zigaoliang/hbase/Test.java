@@ -22,6 +22,7 @@ public class Test {
     private static final String KEYTAB_CONF = ClassLoader.getSystemResource("kerberos/krb5.conf").getPath();
     private static Configuration conf=null;
 
+
     static {
         System.setProperty("java.security.krb5.conf",KEYTAB_CONF);
         conf=HBaseConfiguration.create();
