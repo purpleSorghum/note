@@ -8,7 +8,7 @@
     <!-- 配置zk地址 -->
     <property>
         <name>hbase.zookeeper.quorum</name>
-        <value>192.168.100.21</value>
+        <value>192.168.1.35</value>
     </property>
     <property>
         <name>hbase.zookeeper.property.clientPort</name>

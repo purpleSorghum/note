@@ -9,6 +9,7 @@ import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.security.UserGroupInformation;
 
 import java.io.IOException;
 
@@ -22,17 +23,17 @@ public class Common {
     public static  Admin admin = null;
     // 初始化
     public static Table init() throws Exception{
+        UserGroupInformation userGrout = UserGroupInformation.createRemoteUser("hbase");
+        UserGroupInformation.setLoginUser(userGrout);
         Configuration config = HBaseConfiguration.create();
         conn = ConnectionFactory.createConnection(config);
-        System.out.println("conn : "+conn);
         admin = conn.getAdmin();
-        System.out.println("admin :"+admin);
-        if(!admin.tableExists(TableName.valueOf("t2"))){
-            HTableDescriptor htable=new HTableDescriptor(TableName.valueOf("t2"));
+        if(!admin.tableExists(TableName.valueOf("t3"))){
+            HTableDescriptor htable=new HTableDescriptor(TableName.valueOf("t3"));
             htable.addFamily(new HColumnDescriptor("f1"));
             admin.createTable(htable);
         }
-        return conn.getTable(TableName.valueOf("t2"));
+        return conn.getTable(TableName.valueOf("t3"));
     }
 
     public static void destroy(){

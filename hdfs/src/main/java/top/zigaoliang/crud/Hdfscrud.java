@@ -9,6 +9,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hdfs.client.HdfsAdmin;
 import org.apache.hadoop.io.IOUtils;
+import org.apache.hadoop.security.UserGroupInformation;
 import org.junit.Test;
 
 
@@ -21,6 +22,9 @@ import java.net.URI;
  * @Author hanlin
  * @Date 2019/5/14 17:16
  * hdfs 的基本操作，上传下载之类
+ * hdfs 设置在java操作中指定用户名的几种方式
+ * System.setProperty("HADOOP_USER_NAME","root");
+ * UserGroupInformation
  **/
 public class Hdfscrud {
 
@@ -76,6 +80,8 @@ public class Hdfscrud {
         Configuration conf = new Configuration();
         conf.set("fs.defaultFS","hdfs://192.168.100.21:8020/");
         System.setProperty("HADOOP_USER_NAME","root");
+//        UserGroupInformation userGrout = UserGroupInformation.createRemoteUser("lin");
+//        UserGroupInformation.setLoginUser(userGrout);
         FileSystem fs = FileSystem.get(conf);
         return fs;
     }
