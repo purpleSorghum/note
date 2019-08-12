@@ -22,18 +22,19 @@ public class Common {
     public static Connection conn = null;
     public static  Admin admin = null;
     // 初始化
-    public static Table init() throws Exception{
+    public static Table init(String table) throws Exception{
         UserGroupInformation userGrout = UserGroupInformation.createRemoteUser("hbase");
         UserGroupInformation.setLoginUser(userGrout);
         Configuration config = HBaseConfiguration.create();
+        config.set("hbase.zookeeper.quorum","192.168.100.21:2181");
         conn = ConnectionFactory.createConnection(config);
         admin = conn.getAdmin();
-        if(!admin.tableExists(TableName.valueOf("t3"))){
-            HTableDescriptor htable=new HTableDescriptor(TableName.valueOf("t3"));
+        if(!admin.tableExists(TableName.valueOf(table))){
+            HTableDescriptor htable=new HTableDescriptor(TableName.valueOf(table));
             htable.addFamily(new HColumnDescriptor("f1"));
             admin.createTable(htable);
         }
-        return conn.getTable(TableName.valueOf("t3"));
+        return conn.getTable(TableName.valueOf(table));
     }
 
     public static void destroy(){

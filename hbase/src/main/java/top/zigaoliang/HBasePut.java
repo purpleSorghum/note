@@ -37,15 +37,15 @@ public class HBasePut {
         System.setProperty("HADOOP_USER_NAME","hbase");
         Connection conn = ConnectionFactory.createConnection(config);
         Admin admin = conn.getAdmin();
-        if(!admin.tableExists(TableName.valueOf("t1"))){
-            HTableDescriptor htable=new HTableDescriptor(TableName.valueOf("t1"));
+        if(!admin.tableExists(TableName.valueOf("t5"))){
+            HTableDescriptor htable=new HTableDescriptor(TableName.valueOf("t5"));
             htable.addFamily(new HColumnDescriptor("f1"));
             admin.createTable(htable);
         }
-        Table table = conn.getTable(TableName.valueOf("t1"));
+        Table table = conn.getTable(TableName.valueOf("t5"));
 
         long start = System.currentTimeMillis();
-        for(int i=0;i<100000;i++) {
+        for(int i=100000;i<1000000;i++) {
             Put put = new Put(Bytes.toBytes("r" + i));
             //可以在一行中，同时添加多个列 。一个put对象可以提交同一行的多个单元格，就是列
             put.addColumn(Bytes.toBytes("f1"), Bytes.toBytes("name"), Bytes.toBytes("name"+i));

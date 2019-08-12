@@ -14,6 +14,7 @@
         <module>hdfs</module>
         <module>zookeeper</module>
         <module>mask</module>
+        <module>hive</module>
     </modules>
 
 

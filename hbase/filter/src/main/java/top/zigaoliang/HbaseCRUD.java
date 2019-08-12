@@ -25,7 +25,7 @@ public class HbaseCRUD {
     private static Table table = null;
 
     public static void main(String[] args) throws Exception {
-        table = Common.init();
+        table = Common.init("t3");
 //        put();
 //        get();
 //        append();
