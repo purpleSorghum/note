@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,12 +29,20 @@ public class HiveBase {
         Statement st = conn.createStatement();
         //在on条件中可以指定某个列，如果这个列是表在分桶时候用的列，那么mr不会进行全表扫描，只扫描分区，效率会有很大提升
 //        ResultSet rs = st.executeQuery("select * from t1 tablesample(bucket 2 out of 1000 on rand()) where age > 15");
-        ResultSet rs = st.executeQuery("select count(*) from t1 ");
-//        ResultSet rs = st.executeQuery("Select * from t1 tablesample(bucket 1 out of 1 on rand())");
+        ResultSetMetaData metaData =st.executeQuery("select * from t1 limit 1").getMetaData();
+//        for(int i =1 ;i<=metaData.getColumnCount();i++){
+//            System.out.println("getColumnClassName:"+metaData.getColumnClassName(i));
+//            System.out.println("getColumnLabel:"+metaData.getColumnLabel(i));
+//            System.out.println("getColumnName:"+metaData.getColumnName(i));
+//            System.out.println("getColumnTypeName:"+metaData.getColumnTypeName(i));
+//        }
+        String columnName = metaData.getColumnName(1);
+        ResultSet rs = st.executeQuery("select count("+columnName+") from t1 ");
+//        ResultSet rs = st.executeQuery("Select * from t1 tablesample(bucket 1 out of 1000 on rand())");
         while(rs.next()){
             rows++;
 //            System.out.println(rs.getString("name") + "," + rs.getString("age")) ;
-            System.out.println(rs.getInt(1));
+            System.out.println(rs.getObject(1));
         }
 
         rs.close();
@@ -47,7 +56,7 @@ public class HiveBase {
         map.put("address","192.168.100.21:10000");
         map.put("database","mydb2");
         map.put("table","t1");
-        map.put("number",100);
+        map.put("number",1000);
         map.put("type",0);
 
         ResultSet rs = get(map);
@@ -57,7 +66,6 @@ public class HiveBase {
                     + rs.getString(3));
         }
         System.out.println("共查到记录（条）："+rs.getRow());
-        Collections.shuffle(new ArrayList<>());
     }
 
     public ResultSet get(Map<String,Object> map) throws Exception {
@@ -68,11 +76,12 @@ public class HiveBase {
         Object type = map.get("type");
         String sql ="select " + map.get("column") + " from " + map.get("table");
         if((int)type == 0){
-            ResultSet r = st.executeQuery("select count(*) from "+map.get("table"));
+            ResultSet r = st.executeQuery("select count('name') from "+map.get("table"));
             r.next();
             int count = r.getInt(1);
             int number = (int)(map.get("number"));
             int t = count/number > 0 ? count/number : 1 ;
+            System.out.println("分的桶数量为："+t);
             sql += " tablesample(bucket 1 out of "+ t + " on rand())";
         }else{
             sql += " distribute by rand() sort by rand() limit " + map.get("number");
