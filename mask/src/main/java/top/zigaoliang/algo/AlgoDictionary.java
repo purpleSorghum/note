@@ -9,6 +9,7 @@ import top.zigaoliang.util.AlgoMaskUtil;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,7 +28,7 @@ public class AlgoDictionary extends AlgoBase {
 
     @Override
     public int init(Conf.ConfFind confFind) {
-        dictionary = null;
+        dictionary = new ArrayList<>();
         this.loadDict(confFind.extend);
         return super.init(confFind);
     }

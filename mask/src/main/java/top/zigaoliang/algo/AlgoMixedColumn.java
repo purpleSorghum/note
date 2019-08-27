@@ -33,7 +33,7 @@ public class AlgoMixedColumn extends AlgoBase {
     @Override
     public int init(Conf.ConfFind confFind) {
         cfg = JSONSerializer.deserialize(MixedColumn.class, confFind.extend);
-        if (cfg.getCustomeId() != null) {
+        if (cfg != null && cfg.getCustomeId() != null) {
             this.customId = cfg.getCustomeId();
         }
         return super.init(confFind);
@@ -52,7 +52,7 @@ public class AlgoMixedColumn extends AlgoBase {
     public boolean find(String in) {
         List<String> ins = new ArrayList<>();
         ins.addAll(Arrays.asList(splitStr(in)));
-        if (ins.size() <= 0) {
+        if ( cfg == null || ins.size() <= 0) {
             return false;
         }
         //算法集合
@@ -160,13 +160,15 @@ public class AlgoMixedColumn extends AlgoBase {
 
     //将字符串按照多种字符进行分割
     public String[] splitStr(String in){
-        Set<String> setChar = new HashSet<>();
-        for (int i = 0; i < cfg.getSegment().size(); i++) {
-            setChar.add(cfg.getSegment().get(i).getCh());
-        }
         StringBuilder result = new StringBuilder();
-        for(String str : setChar){
-            result.append(str);
+        Set<String> setChar = new HashSet<>();
+        if(cfg != null) {
+            for (int i = 0; i < cfg.getSegment().size(); i++) {
+                setChar.add(cfg.getSegment().get(i).getCh());
+            }
+            for(String str : setChar){
+                result.append(str);
+            }
         }
         return in.split(result.toString());
     }

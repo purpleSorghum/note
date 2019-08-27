@@ -74,9 +74,10 @@ public class Maskcore {
             AlgoBase algoBase = AlgoFactory.getAlgo(confFind.id);
             //遍历算法配置列表，通过算法id获取具体的算法
             if (algoBase == null) {
-                errorMsg = ErrorCode.NEW_ALGO_ERROR.getMsg() + ";AlgoID:" + confFind.id.getId();
-                log.debug(errorMsg);
-                return errorMsg;
+                continue;
+//                errorMsg = ErrorCode.NEW_ALGO_ERROR.getMsg() + ";AlgoID:" + confFind.id.getId();
+//                log.debug(errorMsg);
+//                return errorMsg;
             }
             //并使用配置信息初始化算法对象
             algoBase.init(confFind);
@@ -213,6 +214,92 @@ public class Maskcore {
         }
         return errorMsg;
     }
+
+    public String columnFind(List<String> in, List<Conf.FindResult> out) {
+        String errorMsg = "";
+        out.clear();
+        ColumnFindStat stat = mapAlgoStat.get(0);
+//        List<Conf.ConfColumnFind> columnFinds = confTableFind.columns;
+        Conf.ConfColumnFind confColumnFind = confTableFind.columns.get(0);
+        if (!confColumnFind.isFind) {
+            return "此列不需要查找";
+        }
+        for (int index = 0; index < in.size(); index++) {//遍历数据
+            String strCol = in.get(index);
+            if (strCol == null || strCol.isEmpty()) {
+                continue;
+            }
+            stat.scanRows++;
+
+            Set<Long> keys = stat.algoStat.keySet();
+            for (Long key : keys) {
+                AlgoStat algoStat = stat.algoStat.get(key);
+                AlgoBase algoBase = listAlgos.get(key);
+                if(algoBase == null )continue;
+                try {
+                    String[] specialSymbol = {CommonUtil.getPrefix(strCol), CommonUtil.getSuffix(strCol)};
+                    strCol = CommonUtil.removeSpecialFromSrc(strCol, specialSymbol[0], specialSymbol[1]);
+                    if (algoBase.find(strCol)) {
+                        algoStat.count++;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    errorMsg += ErrorCode.FIND_FUNC_ERROR.getMsg() + "; AlgoId:" + algoBase.getId().getId() +
+                            "; Data:" + strCol;
+                    log.debug(errorMsg);
+
+                }
+            }
+        }
+
+        //整理发现结果
+        List<Conf.ConfFind> confFinds = confTableFind.confFinds;//发现算法配置
+        nTableRowCount = in.size();//表行数
+
+
+            Conf.FindResult findResult = new Conf.FindResult();
+
+            findResult.name = confColumnFind.name;
+            findResult.tableRows = nTableRowCount;
+            findResult.scanRows = stat.scanRows;
+
+            int nScanRows = stat.scanRows;
+            Set<Long> keys = listAlgos.keySet();
+            for (Long key : keys) {
+                AlgoBase algoBase = listAlgos.get(key);
+                //取得每个算法的统计值
+                int id = algoBase.getId().getId();
+                AlgoStat algoStat = stat.algoStat.get(key);
+                if (algoStat.count == 0) {
+                    continue;
+                }
+
+                //计算算法匹配率
+                double rate = algoStat.count / (float) nScanRows;
+                System.out.println("当前匹配率是:"+rate);
+                //循环配置，比较匹配率
+                for (Conf.ConfFind cf : confFinds) {
+                    if (cf.id == algoBase.getId()) {
+                        if (rate >= cf.rate) {
+                            Conf.FindResultItem item = new Conf.FindResultItem();
+                            item.algoId = AlgoId.getAlgoId(id);
+                            item.customId = cf.ruleId;
+                            item.matchRows = algoStat.count;
+                            findResult.algoItems.add(item);
+                        }
+                    }
+                }
+            }
+            sortResultFindList(findResult.algoItems);
+            out.add(findResult);
+
+
+        if (errorMsg.isEmpty()) {
+            errorMsg = "0";
+        }
+        return errorMsg;
+    }
+
 
 
     /**

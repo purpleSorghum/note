@@ -7,10 +7,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,19 +27,25 @@ public class HiveBase {
         int rows=0;
         Class.forName("org.apache.hive.jdbc.HiveDriver");
 //        Connection conn = DriverManager.getConnection("jdbc:hive2://192.168.100.21:10000/mydb2");
-        Connection conn = DriverManager.getConnection("jdbc:hive2://192.168.100.21:10000/mydb2","root","123456");
+        Connection conn = DriverManager.getConnection("jdbc:hive2://192.168.100.21:10000/","root","123456");
         Statement st = conn.createStatement();
+//        ResultSet rs = st.executeQuery("show databases");
+        st.executeQuery("use mydb2");
+        ResultSet rs = st.executeQuery("show tables");
         //在on条件中可以指定某个列，如果这个列是表在分桶时候用的列，那么mr不会进行全表扫描，只扫描分区，效率会有很大提升
 //        ResultSet rs = st.executeQuery("select * from t1 tablesample(bucket 2 out of 1000 on rand()) where age > 15");
-        ResultSetMetaData metaData =st.executeQuery("select * from t1 limit 1").getMetaData();
+//        ResultSetMetaData metaData =st.executeQuery("select * from t1 limit 1").getMetaData();
 //        for(int i =1 ;i<=metaData.getColumnCount();i++){
 //            System.out.println("getColumnClassName:"+metaData.getColumnClassName(i));
 //            System.out.println("getColumnLabel:"+metaData.getColumnLabel(i));
 //            System.out.println("getColumnName:"+metaData.getColumnName(i));
 //            System.out.println("getColumnTypeName:"+metaData.getColumnTypeName(i));
 //        }
-        String columnName = metaData.getColumnName(1);
-        ResultSet rs = st.executeQuery("select count("+columnName+") from t1 ");
+//        String columnName = metaData.getColumnName(1);
+//        String sql = "select count("+columnName+") from t1 ";
+//        String sql = "select count("+columnName+") from t1 ";
+//        System.out.println(sql);
+//        ResultSet rs = st.executeQuery(sql);
 //        ResultSet rs = st.executeQuery("Select * from t1 tablesample(bucket 1 out of 1000 on rand())");
         while(rs.next()){
             rows++;
@@ -48,6 +56,35 @@ public class HiveBase {
         rs.close();
         st.close();
         conn.close();
+    }
+
+    public List<String> getDatabases(String ip,String port){
+        if(ip == null || ip.isEmpty() )throw new RuntimeException("IP不能为空!");
+        if(port == null || port.isEmpty())port = "10000";
+        List<String> list = new ArrayList<>();
+        try{
+            Connection conn = DriverManager.getConnection("jdbc:hive2://"+ip+":"+port,"root","");
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery("show databases");
+            while(rs.next()){
+//            System.out.println(rs.getString("name") + "," + rs.getString("age")) ;
+                list.add(rs.getString(1));
+//            System.out.println(rs.getObject(1));
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    @Test
+    public void testGetDatabases(){
+        String ip = "192.168.100.21";
+        List<String> list = getDatabases(ip,null);
+        for(String str : list){
+            System.out.println(str);
+        }
     }
 
     @Test

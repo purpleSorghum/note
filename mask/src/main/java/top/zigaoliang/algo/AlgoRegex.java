@@ -30,8 +30,10 @@ public class AlgoRegex extends AlgoBase {
     @Override
     public int init(Conf.ConfFind confFind) {
         Conf.ConfMaskRegex conf = (Conf.ConfMaskRegex)AlgoFactory.getConfMask(confFind.id, confFind.extend);
-        pattern = Pattern.compile(conf.regex);
-        fuzzy = conf.fuzzy;
+        if(conf != null ) {
+            pattern = Pattern.compile(conf.regex);
+            fuzzy = conf.fuzzy;
+        }
         return super.init(confFind);
     }
     @Override

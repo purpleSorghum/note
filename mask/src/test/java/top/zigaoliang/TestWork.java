@@ -186,10 +186,65 @@ public class TestWork {
         }
     }
 
+    @Test
+    public void testColumnFind() {
+        //初始化数据
+        List<String> list = new ArrayList<>();
+        list.add("白永超");
+        list.add("赵伟全");
+        list.add("jjj");
+        list.add("王志");
+        List<Conf.FindResult> listOut = new ArrayList<>();
 
+        //数据库架构配置
+        Conf.ConfTableFind confTableFind = new Conf.ConfTableFind();
+        confTableFind.name = "测试表";
+
+        Conf.ConfColumnFind confColumnFind = new Conf.ConfColumnFind();
+        confColumnFind.name = "name";
+        confColumnFind.isFind = true;
+        confTableFind.columns.add(confColumnFind);
+        Conf.ConfFind confFind ;
+        //算法配置 通用的31种发现算法
+        for(int i =1;i <=31 ;i++){
+            AlgoId algo = AlgoId.getAlgoId(i);
+            confFind = new Conf.ConfFind();
+            confFind.id = algo;
+            confFind.ruleId=algo.getId();
+            confTableFind.confFinds.add(confFind);
+        }
+
+        //发现
+        Maskcore maskcore = new Maskcore();
+        String errorMsg = maskcore.initFind(confTableFind);
+        if (!errorMsg.equals("0")) {
+            System.out.println("初始化错误：" + errorMsg);
+            return;
+        }
+
+        errorMsg = maskcore.columnFind(list, listOut);
+        if (!errorMsg.equals("0")) {
+            System.out.println("执行发现错误：" + errorMsg);
+            return;
+        }
+
+        //输出发现结果
+        for (Conf.FindResult fr : listOut) {
+            System.out.println("==================================");
+            System.out.println("列索引：" + fr.index);
+            System.out.println("列名：" + fr.name);
+            System.out.println("表格行数：" + fr.tableRows);
+            System.out.println("扫描行数：" + fr.scanRows);
+            for (Conf.FindResultItem item : fr.algoItems) {
+                System.out.println("列算法：" + item.algoId.getId());
+                System.out.println("匹配行数：" + item.matchRows);
+                System.out.println("样例:" + item.samples);
+            }
+        }
+    }
     @Test
     public void singleMaskTest() {
-        String strIn = "李白";
+        String strIn = "13088665566";
         StringBuilder strOut = new StringBuilder();
 
         //数据库架构配置
@@ -197,16 +252,16 @@ public class TestWork {
         confTableMask.name = "测试表";
 
         Conf.ConfColumnMask confColumnMask = new Conf.ConfColumnMask();
-        confColumnMask.name = "name";
+        confColumnMask.name = "phone";
         confColumnMask.isMask = true;
-
-        Conf.ConfMaskChineseName confMaskChineseName = new Conf.ConfMaskChineseName();
-        confMaskChineseName.seed = (int) (Math.random() * 100);
-        confMaskChineseName.process = Conf.MaskType.MASK;
-        confMaskChineseName.firstName = true;
-        confMaskChineseName.length = false;
-        confColumnMask.confMask = confMaskChineseName;
-
+        Conf.ConfMaskCellphone conf = new Conf.ConfMaskCellphone();
+//        Conf.ConfMaskChineseName confMaskChineseName = new Conf.ConfMaskChineseName();
+//        confMaskChineseName.seed = (int) (Math.random() * 100);
+//        confMaskChineseName.process = Conf.MaskType.COVER;
+//        confMaskChineseName.firstName = true;
+//        confMaskChineseName.length = false;
+//        confColumnMask.confMask = confMaskChineseName;
+        confColumnMask.confMask = conf;
         confTableMask.columns.add(confColumnMask);
 
         Maskcore maskcore = new Maskcore();

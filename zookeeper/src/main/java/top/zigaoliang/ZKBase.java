@@ -87,7 +87,7 @@ public class ZKBase {
 
     @Test
     public void testWatch() throws Exception{
-        final ZooKeeper zk = new ZooKeeper("s201:2181", 5000, null);
+        final ZooKeeper zk = new ZooKeeper("192.168.100.21:2181", 5000, null);
 
         Stat st = new Stat();
 
@@ -96,14 +96,14 @@ public class ZKBase {
             public void process(WatchedEvent event) {
                 try {
                     System.out.println("数据改了！！！");
-                    zk.getData("/a", this, null);
+                    zk.getData("/king", this, null);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         };
 
-        byte[] data = zk.getData("/a", w , st);
+        byte[] data = zk.getData("/king", w , st);
 
         System.out.println(new String(data));
 
